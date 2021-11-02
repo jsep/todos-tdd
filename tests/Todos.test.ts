@@ -94,6 +94,6 @@ function lengthOf(list: Readonly<Array<string>>) {
   };
 }
 
-function isEmpty(list: any[]) {
+function isEmpty(list: string[]) {
   expect(list).toHaveLength(0);
 }

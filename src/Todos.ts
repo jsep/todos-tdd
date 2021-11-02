@@ -20,6 +20,6 @@ export class Todos {
   }
 
   private _filterTodo(list: string[], todo: string) {
-    return list.filter(t => t != todo);
+    return list.filter(t => t !== todo);
   }
 }
