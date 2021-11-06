@@ -10,12 +10,13 @@ let todosView: TodosView;
 let todos: Todos;
 let todo2: string;
 let todo1: string;
+let newTodo: string;
 
 beforeEach(() => {
   host = document.createElement('div');
   addTodos();
+  newTodo = 'New todo';
   todosView = new TodosView(todos);
-
   todosView.render(host);
 });
 
@@ -37,27 +38,56 @@ test('render todos view', () => {
 });
 
 test('render todos list', () => {
-  expect(todosView.listContainer).toHaveTextContent(todo1);
-  expect(todosView.listContainer).toHaveTextContent(todo2);
+  hasTodo(todo1);
+  hasTodo(todo2);
 });
-
 test('add a new todo', () => {
-  const newTodo = 'New todo';
   todosView.addTodo(newTodo);
-  expect(todosView.listContainer).toHaveTextContent(newTodo);
+  hasTodo(newTodo);
 });
 
 test('add a new todo on submit', () => {
-  const newTodo = 'New todo 2';
-  todosView.formView.input.value = newTodo;
-  fireEvent.submit(todosView.form, {});
-  expect(todosView.listContainer).toHaveTextContent(newTodo);
+  setFormValue(newTodo);
+
+  submitForm();
+
+  hasTodo(newTodo);
+  formValueIsEmpty();
 });
 
-function addTodos() {
+test('add a new todo on click add', () => {
+  setFormValue(newTodo);
+
+  clickAddButton();
+
+  hasTodo(newTodo);
+  formValueIsEmpty();
+});
+
+const addTodos = () => {
   todos = new Todos();
   todo1 = 'First task';
   todo2 = 'Second item';
   todos.add(todo1);
   todos.add(todo2);
+};
+
+const hasTodo = (todo: string) => {
+  expect(todosView.listContainer).toHaveTextContent(todo);
+};
+
+const formValueIsEmpty = () => {
+  expect(todosView.formView.value).toEqual('');
+};
+
+const setFormValue = (newTodo: string) => {
+  todosView.formView.value = newTodo;
+};
+
+const submitForm = () => {
+  fireEvent.submit(todosView.form);
+};
+
+function clickAddButton() {
+  fireEvent.click(todosView.formView.button);
 }

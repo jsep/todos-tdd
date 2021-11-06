@@ -74,12 +74,18 @@ export class TodosForm {
   }
 
   private addEvents() {
-    this.form.onsubmit = (event: Event) => {
+    this.form.onsubmit = this.fireOnSubmitHandlers();
+    this.button.onclick = this.fireOnSubmitHandlers();
+  }
+
+  private fireOnSubmitHandlers() {
+    return (event: Event) => {
       event.preventDefault();
       if (!this.value) return;
       this.onSubmitHandlers.forEach(handler => {
         handler(this.value);
       });
+      this.input.value = '';
     };
   }
 
@@ -89,6 +95,10 @@ export class TodosForm {
 
   get value() {
     return this.input.value;
+  }
+
+  set value(value) {
+    this.input.value = value;
   }
 
   onSubmit(handler: OnSubmitHandler) {
