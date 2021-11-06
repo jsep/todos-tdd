@@ -1,11 +1,18 @@
 {
   "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
+    "experimentalDecorators": true,
     "rootDir": ".",
-    "outDir": "build"
+    "outDir": "build",
+    "target": "ES5",
+    "lib": [
+      "ES6",
+      "DOM"
+    ]
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "./jest.config.ts"
   ]
 }
