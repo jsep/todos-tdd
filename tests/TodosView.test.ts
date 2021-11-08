@@ -1,15 +1,16 @@
 /**
  * @jest-environment jsdom
  */
-import {TodosForm, TodosView} from '../src/TodosView';
+import {TodoItemView, TodosForm, TodosView} from '../src/TodosView';
 import {Todos} from '../src/Todos';
-import {fireEvent} from '@testing-library/react';
+import {fireEvent, getByTestId} from '@testing-library/react';
 
 let host: HTMLDivElement;
 let todosView: TodosView;
 let todos: Todos;
-let todo2: string;
 let todo1: string;
+let todo1View: TodoItemView;
+let todo2: string;
 let newTodo: string;
 
 beforeEach(() => {
@@ -18,6 +19,8 @@ beforeEach(() => {
   newTodo = 'New todo';
   todosView = new TodosView(todos);
   todosView.render(host);
+
+  todo1View = todosView.listView.todosViewItems[0];
 });
 
 test('render todos form', () => {
@@ -62,6 +65,19 @@ test('add a new todo on click add', () => {
 
   hasTodo(newTodo);
   formValueIsEmpty();
+});
+
+function clickRemoveTodoButton(todo: TodoItemView) {
+  fireEvent.click(getByTestId(host, todo.testId));
+}
+
+function doesNotHaveTodo(todo: string) {
+  expect(todosView.listContainer).not.toHaveTextContent(todo);
+}
+
+test('remove todo', () => {
+  clickRemoveTodoButton(todo1View);
+  doesNotHaveTodo(todo1);
 });
 
 const addTodos = () => {

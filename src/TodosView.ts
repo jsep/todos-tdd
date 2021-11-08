@@ -2,18 +2,21 @@ import {Todos} from './Todos';
 
 export class TodosView {
   listContainer = document.createElement('div');
+  listView: TodosListView;
   list = document.createElement('ul');
   formView = new TodosForm();
 
-  constructor(private todos: Todos) {}
-
-  render(host: HTMLElement) {
-    this.renderForm(host);
-    this.renderTodosList(host);
+  constructor(private todos: Todos) {
+    this.listView = new TodosListView(todos);
   }
 
   get form() {
     return this.formView.form;
+  }
+
+  render(host: HTMLElement) {
+    this.renderForm(host);
+    this.renderTodosList(host);
   }
 
   private renderForm(host: HTMLElement) {
@@ -24,24 +27,12 @@ export class TodosView {
   }
 
   private renderTodosList(host: HTMLElement) {
-    this.todos.all.forEach(this.appendTodo);
-    this.listContainer.appendChild(this.list);
+    this.listView.render(this.listContainer);
     host.appendChild(this.listContainer);
   }
 
-  appendTodo = (todo: string) => {
-    this.list.appendChild(this.renderTodo(todo));
-  };
-
-  private renderTodo(todo: string) {
-    const item = document.createElement('li');
-    item.innerHTML = todo;
-    return item;
-  }
-
-  addTodo(newTodo: string) {
-    this.todos.add(newTodo);
-    this.appendTodo(newTodo);
+  addTodo(todo: string) {
+    this.listView.addTodo(todo);
   }
 }
 
@@ -103,5 +94,80 @@ export class TodosForm {
 
   onSubmit(handler: OnSubmitHandler) {
     this.onSubmitHandlers.push(handler);
+  }
+}
+
+export class TodosListView {
+  list = document.createElement('ul');
+  todosViewItems: TodoItemView[] = [];
+
+  constructor(private todos: Todos) {}
+
+  render(host: HTMLElement) {
+    this.todos.all.forEach(this.renderTodo);
+    host.appendChild(this.list);
+  }
+
+  renderTodo = (todo: string) => {
+    const todoItem = new TodoItemView(todo);
+    todoItem.render(this.list);
+    todoItem.onRemove(item => {
+      this.todos.remove(todo);
+      item.item.remove();
+    });
+    this.todosViewItems.push(todoItem);
+  };
+
+  addTodo(todo: string) {
+    this.todos.add(todo);
+    this.renderTodo(todo);
+  }
+}
+
+type OnRemoveHandler = (item: TodoItemView) => void;
+
+export class TodoItemView {
+  item = document.createElement('li');
+  removeButton = document.createElement('button');
+  text = document.createElement('span');
+  private onRemoveHandlers: OnRemoveHandler[] = [];
+
+  constructor(private todo: string) {
+    this.init();
+  }
+
+  get testId() {
+    return this.todo + 'remove';
+  }
+
+  onRemove(handler: OnRemoveHandler) {
+    this.onRemoveHandlers.push(handler);
+  }
+
+  render(host: HTMLElement) {
+    this.item.appendChild(this.text);
+    this.item.appendChild(this.removeButton);
+    host.appendChild(this.item);
+  }
+
+  private init() {
+    this.setupText();
+    this.setupRemoveBtn();
+  }
+
+  private setupRemoveBtn() {
+    this.removeButton.innerHTML = 'x';
+    this.removeButton.setAttribute('data-testid', this.testId);
+    this.removeButton.innerHTML = 'x';
+    this.removeButton.onclick = (e: Event) => {
+      e.preventDefault();
+      this.onRemoveHandlers.forEach(handler => {
+        handler(this);
+      });
+    };
+  }
+
+  private setupText() {
+    this.text.innerHTML = this.todo;
   }
 }
