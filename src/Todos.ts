@@ -22,4 +22,14 @@ export class Todos {
   private _filterTodo(list: string[], todo: string) {
     return list.filter(t => t !== todo);
   }
+
+  edit(todo: string, editedTodo: string) {
+    this.editTodoInList(this.all, todo, editedTodo);
+    this.editTodoInList(this.active, todo, editedTodo);
+  }
+
+  private editTodoInList(list: string[], todo: string, editedTodo: string) {
+    const index = list.indexOf(todo);
+    list[index] = editedTodo;
+  }
 }

@@ -17,6 +17,16 @@ test('add todo', () => {
   expect(todos.all).toContain(todo1);
 });
 
+test('edit todo', () => {
+  addTodo(todo1);
+  const editedTodo = 'Edited todo';
+
+  editTodo(todo1, editedTodo);
+
+  expect(todos.all).toContain(editedTodo);
+  expect(todos.active).toContain(editedTodo);
+});
+
 test('remove todo', () => {
   addTodo(todo1);
   removeTodo(todo1);
@@ -96,4 +106,8 @@ function lengthOf(list: Readonly<Array<string>>) {
 
 function isEmpty(list: string[]) {
   expect(list).toHaveLength(0);
+}
+
+function editTodo(todo1: string, editedTodo: string) {
+  todos.edit(todo1, editedTodo);
 }

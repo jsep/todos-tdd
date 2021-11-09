@@ -80,6 +80,25 @@ test('remove todo', () => {
   doesNotHaveTodo(todo1);
 });
 
+function dbClickToEditTodo(todo1View: TodoItemView) {
+  fireEvent.dblClick(todo1View.item);
+}
+
+function editTodo(todo1View: TodoItemView, text: string) {
+  todo1View.input.value = text;
+  fireEvent.submit(todo1View.form);
+}
+
+test('edit todo', () => {
+  dbClickToEditTodo(todo1View);
+  const oldTodo = todo1;
+  const editedTodo = 'Edited todo';
+  editTodo(todo1View, editedTodo);
+
+  doesNotHaveTodo(oldTodo);
+  hasTodo(editedTodo);
+});
+
 const addTodos = () => {
   todos = new Todos();
   todo1 = 'First task';
@@ -89,6 +108,7 @@ const addTodos = () => {
 };
 
 const hasTodo = (todo: string) => {
+  expect(todos.all).toContain(todo);
   expect(todosView.listContainer).toHaveTextContent(todo);
 };
 
