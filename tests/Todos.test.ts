@@ -1,13 +1,14 @@
 import {Todos} from '../src/Todos';
+import {Todo} from '../src/Todo';
 
 let todos: Todos;
-let todo2: string;
+let todo1: Todo;
+let todo2: Todo;
 
-let todo1: string;
 beforeEach(() => {
   todos = new Todos();
-  todo1 = 'Todo 1';
-  todo2 = 'Todo 2';
+  todo1 = new Todo('Todo 1');
+  todo2 = new Todo('Todo 2');
 });
 
 test('add todo', () => {
@@ -19,12 +20,13 @@ test('add todo', () => {
 
 test('edit todo', () => {
   addTodo(todo1);
-  const editedTodo = 'Edited todo';
+  const editedTask = 'Edited todo';
 
-  editTodo(todo1, editedTodo);
+  editTodo(todo1, editedTask);
 
-  expect(todos.all).toContain(editedTodo);
-  expect(todos.active).toContain(editedTodo);
+  expect(todos.all).toContain(todo1);
+  expect(todos.active).toContain(todo1);
+  expect(todo1.task).toEqual(editedTask);
 });
 
 test('remove todo', () => {
@@ -62,6 +64,7 @@ test('mark todo completed', () => {
   lengthOf(todos.all).is(2);
   lengthOf(todos.completed).is(1);
   expect(todos.completed).toContain(todo1);
+  expect(todo1.completed).toBeTruthy();
 });
 
 test('active add todos', () => {
@@ -84,19 +87,19 @@ test('active filter completed todos', () => {
   expect(todos.active).toContain(todo1);
 });
 
-const addTodo = (todo: string) => {
+const addTodo = (todo: Todo) => {
   todos.add(todo);
 };
 
-function removeTodo(todo: string) {
+function removeTodo(todo: Todo) {
   todos.remove(todo);
 }
 
-function completeTodo(todo: string) {
+function completeTodo(todo: Todo) {
   todos.complete(todo);
 }
 
-function lengthOf(list: Readonly<Array<string>>) {
+function lengthOf(list: Readonly<Array<Todo>>) {
   return {
     is(length: number) {
       expect(list).toHaveLength(length);
@@ -104,10 +107,10 @@ function lengthOf(list: Readonly<Array<string>>) {
   };
 }
 
-function isEmpty(list: string[]) {
+function isEmpty(list: Todo[]) {
   expect(list).toHaveLength(0);
 }
 
-function editTodo(todo1: string, editedTodo: string) {
+function editTodo(todo1: Todo, editedTodo: string) {
   todos.edit(todo1, editedTodo);
 }

@@ -1,35 +1,32 @@
-export class Todos {
-  all: string[] = [];
-  completed: string[] = [];
-  active: string[] = [];
+import {Todo} from './Todo';
 
-  add(todo: string) {
+export class Todos {
+  all: Todo[] = [];
+  completed: Todo[] = [];
+  active: Todo[] = [];
+
+  add(todo: Todo) {
     this.all.push(todo);
     this.active.push(todo);
   }
 
-  remove(todoToRemove: string) {
+  remove(todoToRemove: Todo) {
     this.all = this._filterTodo(this.all, todoToRemove);
     this.completed = this._filterTodo(this.completed, todoToRemove);
     this.active = this._filterTodo(this.active, todoToRemove);
   }
 
-  complete(todo: string) {
+  complete(todo: Todo) {
+    todo.markCompleted();
     this.completed.push(todo);
     this.active = this._filterTodo(this.active, todo);
   }
 
-  private _filterTodo(list: string[], todo: string) {
+  private _filterTodo(list: Todo[], todo: Todo) {
     return list.filter(t => t !== todo);
   }
 
-  edit(todo: string, editedTodo: string) {
-    this.editTodoInList(this.all, todo, editedTodo);
-    this.editTodoInList(this.active, todo, editedTodo);
-  }
-
-  private editTodoInList(list: string[], todo: string, editedTodo: string) {
-    const index = list.indexOf(todo);
-    list[index] = editedTodo;
+  edit(todo: Todo, editedTask: string) {
+    todo.task = editedTask;
   }
 }
